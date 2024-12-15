@@ -1,9 +1,4 @@
-﻿using AutoMapper;
-using EDAS.BacktrackingCombinatronics;
-using EDAS.Worker.Services.Factory;
-using MediatR;
-
-namespace EDAS.Worker.Handlers.Commands;
+﻿namespace EDAS.Worker.Handlers.Commands;
 
 public class CombinationsInput : IRequest<CombinationsOutput>
 {
@@ -26,6 +21,21 @@ public class CombinationsOutput
     public CombinationsOutput()
     {
         
+    }
+
+    public override string ToString()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        foreach (var pair in Elements) 
+        {
+            string current = string.Join(", ", pair) + "\n";
+            sb.Append(current);
+        }
+
+        string result = sb.ToString();
+
+        return result;
     }
 }
 

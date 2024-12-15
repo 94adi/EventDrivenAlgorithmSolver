@@ -1,16 +1,4 @@
-﻿using AutoMapper;
-using EDAS.Common;
-using EDAS.Common.Models;
-using EDAS.WebApp.Services;
-using EDAS.Worker.Handlers.Commands;
-using MediatR;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System.Text;
-using System.Text.Json.Serialization;
-
-namespace EDAS.Worker.Services;
+﻿namespace EDAS.Worker.Services;
 
 public class ConsumerService : BackgroundService
 {
@@ -31,7 +19,6 @@ public class ConsumerService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
         _channel = await _rabbitMQClientService.GetChannelAsync();
 
         await _channel.ExchangeDeclareAsync(exchange: RabbitMQConfig.EXCHANGE_NAME,
@@ -53,7 +40,11 @@ public class ConsumerService : BackgroundService
         consumer.ReceivedAsync += async (model, ea) =>
         {
             using var scope = _serviceProvider.CreateScope();
+
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+            var emailService = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+            await emailService.SendEmailAsync("", "", "");
 
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
@@ -62,16 +53,20 @@ public class ConsumerService : BackgroundService
             {
                 var algorithmCommand = _mapper.Map<CombinationsInput>(inputModel);
                 var combinationsOutput = await mediator.Send(algorithmCommand);
+
+                //TO DO: use user's email address
+                await emailService.SendEmailAsync("adrianrcotuna@gmail.com", 
+                    "Solution", 
+                    combinationsOutput.ToString());
+
+                await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             }
             catch(Exception e)
             {
                 //message will not be validated hence it will be sent by the broker again
                 //log exception here
                 return;
-            }
-
-            //fire and forget send email? store in db?
-            await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+            }           
         };
 
         await _channel.BasicConsumeAsync(queue: RabbitMQConfig.QUEUE_NAME, 

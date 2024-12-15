@@ -1,6 +1,4 @@
-﻿using EDAS.BacktrackingCombinatronics;
-
-namespace EDAS.Worker.Services.Factory;
+﻿namespace EDAS.Worker.Services.Factory;
 
 public class CombinationsAlgorithmFactory : ICombinationsAlgorithmFactory
 {

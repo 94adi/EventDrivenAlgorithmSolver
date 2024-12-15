@@ -1,12 +1,3 @@
-using EDAS.BacktrackingCombinatronics;
-using EDAS.Common;
-using EDAS.WebApp.Services;
-using EDAS.Worker.Handlers.Commands;
-using EDAS.Worker.Mapper;
-using EDAS.Worker.Services;
-using EDAS.Worker.Services.Factory;
-using MediatR;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton(sp =>
@@ -14,11 +5,14 @@ builder.Services.AddSingleton(sp =>
     RabbitMQConfig.USERNAME, 
     RabbitMQConfig.PASSWORD));
 
+//taken from user secrets local file
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+
 builder.Services.AddHostedService<ConsumerService>();
 
 builder.Services.AddScoped<ICombinationsAlgorithmFactory, CombinationsAlgorithmFactory>();
 
-//builder.Services.AddScoped<ICombinationAlgo, CombinationAlgo>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var assembly = typeof(Program).Assembly;
 

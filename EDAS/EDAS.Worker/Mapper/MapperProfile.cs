@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using EDAS.BacktrackingCombinatronics;
 using EDAS.Common.Models;
-using EDAS.Worker.Handlers.Commands;
-
 namespace EDAS.Worker.Mapper;
 
 public class MapperProfile : Profile
