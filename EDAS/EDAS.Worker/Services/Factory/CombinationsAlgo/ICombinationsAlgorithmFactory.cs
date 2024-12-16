@@ -1,6 +1,6 @@
 ﻿using EDAS.BacktrackingCombinatronics;
 
-namespace EDAS.Worker.Services.Factory;
+namespace EDAS.Worker.Services.Factory.CombinationsAlgo;
 
 public interface ICombinationsAlgorithmFactory
 {

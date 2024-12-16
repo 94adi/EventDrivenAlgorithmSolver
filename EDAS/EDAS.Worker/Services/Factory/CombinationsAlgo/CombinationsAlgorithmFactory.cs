@@ -1,4 +1,4 @@
-﻿namespace EDAS.Worker.Services.Factory;
+﻿namespace EDAS.Worker.Services.Factory.CombinationsAlgo;
 
 public class CombinationsAlgorithmFactory : ICombinationsAlgorithmFactory
 {

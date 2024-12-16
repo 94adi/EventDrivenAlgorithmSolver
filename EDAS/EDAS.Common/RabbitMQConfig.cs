@@ -2,7 +2,7 @@
 
 namespace EDAS.Common;
 
-//FOR DEV ONLY
+//MOVE THIS
 public static class RabbitMQConfig
 {
     public const string HOSTNAME = "localhost";

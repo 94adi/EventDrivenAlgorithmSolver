@@ -1,3 +1,7 @@
+using EDAS.Worker.Services.Factory.CombinationsAlgo;
+using EDAS.Worker.Services.Factory.QueueFactory;
+using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton(sp =>
@@ -8,13 +12,21 @@ builder.Services.AddSingleton(sp =>
 //taken from user secrets local file
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
 
+builder.Services.Configure<WorkerType>(builder.Configuration.GetSection("WorkerType"));
+
+var workerType = builder.Configuration["WorkerType:Type"];
+
+builder.Services.Configure<RabbitMqConfig>(builder.Configuration.GetSection($"RabbitMqConfig:{workerType}"));
+
 builder.Services.AddHostedService<ConsumerService>();
 
 builder.Services.AddScoped<ICombinationsAlgorithmFactory, CombinationsAlgorithmFactory>();
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
-var assembly = typeof(Program).Assembly;
+builder.Services.AddScoped<IQueueFactory, QueueFactory>();
+
+var assembly = typeof(Program).Assembly; 
 
 //NOTE: MediatR scope is singleton in BackgroundService
 builder.Services.AddMediatR(config =>

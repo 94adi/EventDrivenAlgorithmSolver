@@ -1,4 +1,6 @@
-﻿namespace EDAS.Worker.Handlers.Commands;
+﻿using EDAS.Worker.Services.Factory.CombinationsAlgo;
+
+namespace EDAS.Worker.Handlers.Commands;
 
 public class CombinationsInput : IRequest<CombinationsOutput>
 {
