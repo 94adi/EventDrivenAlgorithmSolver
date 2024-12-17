@@ -1,0 +1,23 @@
+{
+  "RabbitMqConfig": {
+    "Broker": {
+      "Hostname": "localhost",
+      "Port": "15672",
+      "Username": "guest", /*move to secrets*/
+      "Password": "guest", /*move to secrets*/
+      "ExchangeName": "edas_exchange",
+      "ExchangeType": "topic"
+    },
+
+    "Queues": {
+      "Combinatronics": {
+        "QueueName": "combinatronics_queue",
+        "RoutingKey": "algorithm.backtracking.combinatronics",
+        "QueueDurable": "true",
+        "QueueExclusive": "false",
+        "QueueAutodelete": "false",
+        "AlgorithmType": "Combinatronics"
+      }
+    }
+  }
+}

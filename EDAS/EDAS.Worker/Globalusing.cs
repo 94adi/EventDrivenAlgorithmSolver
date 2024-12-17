@@ -16,3 +16,5 @@ global using RabbitMQ.Client;
 global using RabbitMQ.Client.Events;
 global using Microsoft.Extensions.Options;
 global using System.Net.Http.Headers;
+global using EDAS.Worker.Services.Factory.CombinationsAlgo;
+global using EDAS.Worker.Services.Factory.QueueFactory;

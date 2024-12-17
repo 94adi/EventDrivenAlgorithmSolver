@@ -1,17 +1,21 @@
-﻿using EDAS.WebApp.Models;
-using EDAS.WebApp.Services;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace EDAS.WebApp.Controllers;
 
 public class AlgorithmController : Controller
 {
-    private readonly IProducerService _producerSerice;
+    private readonly BrokerConfig _brokerConfig;
+    private readonly QueueConfigCollection _queueConfigCollection;
+    private readonly IProducerFactory _producerFactory;
 
-    public AlgorithmController(IProducerService producerSerice)
+    public AlgorithmController(
+        IOptions<BrokerConfig> brokerConfigOption,
+        QueueConfigCollection queueConfigCollection,
+        IProducerFactory producerFactory)
     {
-        _producerSerice = producerSerice;
+        _brokerConfig = brokerConfigOption.Value;
+        _queueConfigCollection = queueConfigCollection;
+        _producerFactory = producerFactory;
     }
 
     [HttpGet]
@@ -24,6 +28,7 @@ public class AlgorithmController : Controller
     [Route("[controller]/Backtracking/[action]")]
     public IActionResult Combinatronics()
     {
+        
         var viewModel = new CombinatronicsVM();
         return View(viewModel);
     }
@@ -34,16 +39,22 @@ public class AlgorithmController : Controller
     {
         if (ModelState.IsValid)
         {
-            //var elements = viewModel.ElementsCSV.Split(',').Select(int.Parse).ToList();
-
             var content = JsonConvert.SerializeObject(viewModel);
+
+            var producerType = ProducerType.Combinatronics;
+
+            var queueConfig = _queueConfigCollection.QueuesConfig[producerType];
+
+            var producerFactoryConfig = new ProducerFactoryConfig(queueConfig, producerType);
+
+            var producerService = await _producerFactory.Create(producerFactoryConfig);
 
             var message = new ProducerMessage
             {
                 Message = content
-            };      
+            };
 
-            await _producerSerice.SendMessageAsync(message);
+            await producerService.SendMessageAsync(message);
 
             return RedirectToAction(nameof(SubmissionSuccessful));
         }

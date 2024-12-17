@@ -24,4 +24,8 @@
     <ProjectReference Include="..\EDAS.Common\EDAS.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Enums\" />
+  </ItemGroup>
+
 </Project>

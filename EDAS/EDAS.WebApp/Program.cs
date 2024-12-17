@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using EDAS.WebApp.Data;
-using EDAS.WebApp.Areas.Identity.Data;
-using EDAS.WebApp.Services;
-using EDAS.Common;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("EDASWebAppContextConnection") 
@@ -18,16 +11,32 @@ builder.Services.AddDefaultIdentity<EDASWebAppUser>(options =>
     options.SignIn.RequireConfirmedEmail = true;
     options.Password.RequireDigit = true;
     options.Password.RequireNonAlphanumeric = true;
-})
-.AddEntityFrameworkStores<EDASWebAppContext>();
+}).AddEntityFrameworkStores<EDASWebAppContext>();
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton(sp =>
-    new RabbitMQClientService(RabbitMQConfig.HOSTNAME, RabbitMQConfig.USERNAME, RabbitMQConfig.PASSWORD));
+builder.Services.AddAutoMapper(typeof(MapperProfile));
 
-builder.Services.AddTransient<IProducerService, ProducerService>();
+var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rabbitmqconfig.json");
+
+builder.Configuration.AddJsonFile(rabbitMqConfigPath, optional: false, reloadOnChange: true);
+
+builder.Services.Configure<BrokerConfig>(builder.Configuration.GetSection("RabbitMqConfig:Broker"));
+
+var brokerConfig = builder.Configuration.GetSection("RabbitMqConfig:Broker").Get<BrokerConfig>();
+
+var queuesDict = builder.Configuration
+                        .GetSection("RabbitMqConfig:Queues")
+                        .Get<Dictionary<string, QueueConfig>>();
+
+var queuesConfigCollection = new QueueConfigCollection { QueuesConfig = queuesDict };
+
+builder.Services.AddSingleton(sp =>
+    new RabbitMQClientService(brokerConfig.Hostname, brokerConfig.Username, brokerConfig.Password));
+
+builder.Services.AddScoped<IProducerFactory, ProducerFactory>();
+
+builder.Services.AddSingleton(queuesConfigCollection);
 
 var app = builder.Build();
 

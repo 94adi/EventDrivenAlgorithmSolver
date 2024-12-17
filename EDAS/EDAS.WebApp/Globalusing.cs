@@ -1,0 +1,11 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using EDAS.WebApp.Data;
+global using EDAS.WebApp.Areas.Identity.Data;
+global using EDAS.WebApp.Services;
+global using EDAS.Common;
+global using EDAS.Common.Models;
+global using EDAS.WebApp.Services.Factory;
+global using EDAS.WebApp.Models;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.Extensions.Options;
+global using EDAS.WebApp.Mapper;

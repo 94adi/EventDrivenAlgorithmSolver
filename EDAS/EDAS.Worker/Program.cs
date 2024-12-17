@@ -1,9 +1,6 @@
-using EDAS.Worker.Services.Factory.CombinationsAlgo;
-using EDAS.Worker.Services.Factory.QueueFactory;
-using Microsoft.Extensions.DependencyInjection;
-
 var builder = WebApplication.CreateBuilder(args);
 
+//TODO: refactor
 builder.Services.AddSingleton(sp =>
     new RabbitMQClientService(RabbitMQConfig.HOSTNAME, 
     RabbitMQConfig.USERNAME, 
