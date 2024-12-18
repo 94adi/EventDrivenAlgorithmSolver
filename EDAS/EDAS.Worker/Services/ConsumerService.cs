@@ -15,12 +15,12 @@ public class ConsumerService : BackgroundService
     public ConsumerService(RabbitMQClientService rabbitMQClientService,
         IMapper mapper,
         IServiceProvider serviceProvider,
-        IOptions<RabbitMqConfig> rabbitMqConfig)
+        RabbitMqConfig rabbitMqConfig)
     {
         _rabbitMQClientService = rabbitMQClientService;
         _mapper = mapper;
         _serviceProvider = serviceProvider;
-        _rabbitMqConfig = rabbitMqConfig.Value;
+        _rabbitMqConfig = rabbitMqConfig;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -32,6 +32,7 @@ public class ConsumerService : BackgroundService
 
         var queueFactory = scope.ServiceProvider.GetRequiredService<IQueueFactory>();
 
+        //solve
         var queueType = ConvertStringToEnum(_rabbitMqConfig.AlgorithmType);
 
         var queueFacoryConfig = new QueueFactoryConfig(_channel, 
